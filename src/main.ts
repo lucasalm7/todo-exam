@@ -1,3 +1,5 @@
+import './style.css'
+
 // structure of the data schema
 interface Todo {
   id: number;
