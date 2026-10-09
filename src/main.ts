@@ -27,25 +27,6 @@ const addTodo = (text:string):void => {
   renderTodos();
 }
 
-const renderTodos = ():void => {
-  // clears the current list
-  todoList.innerHTML = '';
-
-  todos.forEach(todo => {
-    const li = document.createElement('li')
-    li.className = 'todo-item'
-    li.innerHTML = `
-      <span>${todo.text}</span>
-      <button>Remove</button>
-    `
-
-    addRemoveButtonListener(li, todo.id);
-    todoList.appendChild(li)
-  })
-}
-
-renderTodos();
-
 todoForm.addEventListener('submit', (event: Event) => {
   event.preventDefault();
 
@@ -59,7 +40,7 @@ todoForm.addEventListener('submit', (event: Event) => {
 
 
 const addRemoveButtonListener = (li:HTMLLIElement, id:number):void => {
-  const removeButton = li.querySelector('button');
+  const removeButton = li.querySelector('.remove-btn');
   removeButton?.addEventListener('click', () => removeTodo(id))
 }
 
@@ -67,3 +48,41 @@ const removeTodo = (id:number):void => {
   todos = todos.filter(todo => todo.id !== id)
   renderTodos()
 }
+
+const addEditButtonListener = (li:HTMLLIElement, id:number):void => {
+  const editButton = li.querySelector('.edit-btn')
+  editButton?.addEventListener('click', () => editTodo(id))
+}
+
+const editTodo = (id:number):void => {
+  const todo = todos.find(todo => todo.id === id)
+  if (todo) {
+    const text = prompt('Edit todo', todo.text)?.trim()
+    if (text) {
+      todo.text = text
+      renderTodos()
+    }
+  }
+}
+
+const renderTodos = ():void => {
+  // clears the current list
+  todoList.innerHTML = '';
+
+  todos.forEach(todo => {
+    const li = document.createElement('li')
+    li.className = 'todo-item'
+    li.innerHTML = `
+      <span>${todo.text}</span>
+      <button class="remove-btn">Remove</button>
+      <button class="edit-btn">Edit</button>
+
+    `
+
+    addEditButtonListener(li, todo.id);
+    addRemoveButtonListener(li, todo.id);
+    todoList.appendChild(li)
+  })
+}
+
+renderTodos();
