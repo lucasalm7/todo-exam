@@ -1,4 +1,5 @@
 import './style.css'
+import { initializeColorPicker } from './colorPicker'
 
 // structure of the data schema
 interface Todo {
@@ -86,3 +87,7 @@ const renderTodos = ():void => {
 }
 
 renderTodos();
+
+document.addEventListener('DOMContentLoaded', () => {
+  initializeColorPicker();
+});

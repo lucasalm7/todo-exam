@@ -1,4 +1,6 @@
-import { describe, it, expect } from 'vitest'
+// @vitest-environment jsdom
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { changeBackgroundColor, initializeColorPicker } from './colorPicker'
 
 interface Todo {
     id:number,
@@ -50,5 +52,35 @@ describe('removeTodo', () => {
         const todos: Todo[] = [{ id: 1, text: 'First todo', completed: false }];
         removeTodo(todos, 1);
         expect(todos.length).toBe(1);
+    })
+})
+
+describe('color picker', () => {
+    beforeEach(() => {
+        document.body.innerHTML = '';
+        document.body.style.backgroundColor = '';
+    })
+
+    it('changeBackgroundColor should set the body background color', () => {
+        changeBackgroundColor('#ff0000');
+        expect(document.body.style.backgroundColor).toBe('rgb(255, 0, 0)');
+    })
+
+    it('should change the background when the color picker input changes', () => {
+        document.body.innerHTML = '<input type="color" id="colorPicker">';
+        initializeColorPicker();
+
+        const picker = document.getElementById('colorPicker') as HTMLInputElement;
+        picker.value = '#00ff00';
+        picker.dispatchEvent(new Event('input'));
+
+        expect(document.body.style.backgroundColor).toBe('rgb(0, 255, 0)');
+    })
+
+    it('should log an error if the color picker element is missing', () => {
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        initializeColorPicker();
+        expect(errorSpy).toHaveBeenCalledWith('Color picker element not found');
+        errorSpy.mockRestore();
     })
 })
