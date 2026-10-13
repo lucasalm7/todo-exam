@@ -75,7 +75,6 @@ h1 {
 }
 .todo-item button {
   border: none;
-  background: #dc3545;
   color: #fff;
   border-radius: 3px;
   cursor: pointer;
@@ -92,4 +91,13 @@ h1 {
   font-size: 0.9em;
   margin-top: 5px;
   display: none;
+}
+
+.edit-btn { 
+  background:orange;
+}
+
+.remove-btn{
+  background: #dc3545;
+
 }
