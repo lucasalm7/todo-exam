@@ -9,6 +9,7 @@ interface Todo {
 }
 
 let todos: Todo[] = [];
+let editingId: number | null = null;
 
 const todoInput = document.getElementById('todo-input') as HTMLInputElement
 const todoForm = document.querySelector('.todo-form') as HTMLFormElement
@@ -39,31 +40,38 @@ todoForm.addEventListener('submit', (event: Event) => {
   }
 })
 
-
-const addRemoveButtonListener = (li:HTMLLIElement, id:number):void => {
-  const removeButton = li.querySelector('.remove-btn');
-  removeButton?.addEventListener('click', () => removeTodo(id))
-}
-
 const removeTodo = (id:number):void => {
   todos = todos.filter(todo => todo.id !== id)
+  if (editingId === id) editingId = null
+  renderTodos()
+}
+const startEditing = (id:number):void => {
+  editingId = id
   renderTodos()
 }
 
-const addEditButtonListener = (li:HTMLLIElement, id:number):void => {
-  const editButton = li.querySelector('.edit-btn')
-  editButton?.addEventListener('click', () => editTodo(id))
+const cancelEditing = ():void => {
+  editingId = null
+  renderTodos()
 }
 
-const editTodo = (id:number):void => {
+const saveTodo = (id:number, newText:string):void => {
+  const text = newText.trim()
+  if (text === '') return // stay in edit mode, empty todos aren't allowed
+
   const todo = todos.find(todo => todo.id === id)
-  if (todo) {
-    const text = prompt('Edit todo', todo.text)?.trim()
-    if (text) {
-      todo.text = text
-      renderTodos()
-    }
-  }
+  if (todo) todo.text = text
+  editingId = null
+  renderTodos()
+}
+
+const createButton = (label:string, className:string, onClick:() => void):HTMLButtonElement => {
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = className
+  button.textContent = label
+  button.addEventListener('click', onClick)
+  return button
 }
 
 const renderTodos = ():void => {
@@ -73,16 +81,36 @@ const renderTodos = ():void => {
   todos.forEach(todo => {
     const li = document.createElement('li')
     li.className = 'todo-item'
-    li.innerHTML = `
-      <span>${todo.text}</span>
-      <button class="remove-btn">Remove</button>
-      <button class="edit-btn">Edit</button>
 
-    `
+    if (todo.id === editingId) {
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.className = 'edit-input'
+      input.value = todo.text
+      input.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (event.key === 'Enter') saveTodo(todo.id, input.value)
+        if (event.key === 'Escape') cancelEditing()
+      })
 
-    addEditButtonListener(li, todo.id);
-    addRemoveButtonListener(li, todo.id);
-    todoList.appendChild(li)
+      li.append(
+        input,
+        createButton('Save', 'save-btn', () => saveTodo(todo.id, input.value)),
+        createButton('Cancel', 'cancel-btn', cancelEditing)
+      )
+      todoList.appendChild(li)
+      input.focus()
+      input.select()
+    } else {
+      const span = document.createElement('span')
+      span.textContent = todo.text
+
+      li.append(
+        span,
+        createButton('Remove', 'remove-btn', () => removeTodo(todo.id)),
+        createButton('Edit', 'edit-btn', () => startEditing(todo.id))
+      )
+      todoList.appendChild(li)
+    }
   })
 }
 
