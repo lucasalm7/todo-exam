@@ -1,0 +1,9 @@
+{
+  "browsers": "chrome:headless",
+  "chromePath": "C:\\Users\\joaos\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe",
+  "src": "e2e/todo.e2e.ts",
+  "tsConfigPath": "e2e/tsconfig.json",
+  "browserInitTimeout": 60000,
+  "clientScripts": [],
+  "nativeAutomation": false
+}
