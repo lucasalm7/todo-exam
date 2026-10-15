@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { changeBackgroundColor, initializeColorPicker } from './colorPicker'
+import { updateTodoText } from './todoLogic'
 
 interface Todo {
     id:number,
@@ -82,5 +83,43 @@ describe('color picker', () => {
         initializeColorPicker();
         expect(errorSpy).toHaveBeenCalledWith('Color picker element not found');
         errorSpy.mockRestore();
+    })
+})
+
+describe('updateTodoText', () => {
+    const todos: Todo[] = [
+        { id: 1, text: 'First todo', completed: false },
+        { id: 2, text: 'Second todo', completed: true }
+    ];
+
+    it('should update the text of the todo with the given id', () => {
+        const result = updateTodoText(todos, 1, 'Updated todo');
+        expect(result[0].text).toBe('Updated todo');
+        expect(result[1].text).toBe('Second todo');
+    })
+
+    it('should keep the other fields of the edited todo', () => {
+        const result = updateTodoText(todos, 2, 'Changed');
+        expect(result[1].id).toBe(2);
+        expect(result[1].completed).toBe(true);
+    })
+
+    it('should trim whitespace from the new text', () => {
+        const result = updateTodoText(todos, 1, '  spaced  ');
+        expect(result[0].text).toBe('spaced');
+    })
+
+    it('should ignore empty or whitespace-only text', () => {
+        expect(updateTodoText(todos, 1, '')).toEqual(todos);
+        expect(updateTodoText(todos, 1, '   ')).toEqual(todos);
+    })
+
+    it('should leave the list unchanged if the id does not exist', () => {
+        expect(updateTodoText(todos, 99, 'Nope')).toEqual(todos);
+    })
+
+    it('should not mutate the original list', () => {
+        updateTodoText(todos, 1, 'Changed');
+        expect(todos[0].text).toBe('First todo');
     })
 })

@@ -1,14 +1,9 @@
 import './style.css'
 import { initializeColorPicker } from './colorPicker'
-
-// structure of the data schema
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+import { updateTodoText, type Todo } from './todoLogic'
 
 let todos: Todo[] = [];
+// id of the todo currently being edited, or null if none
 let editingId: number | null = null;
 
 const todoInput = document.getElementById('todo-input') as HTMLInputElement
@@ -45,73 +40,78 @@ const removeTodo = (id:number):void => {
   if (editingId === id) editingId = null
   renderTodos()
 }
-const startEditing = (id:number):void => {
+const startEdit = (id:number):void => {
   editingId = id
   renderTodos()
 }
 
-const cancelEditing = ():void => {
+const cancelEdit = ():void => {
   editingId = null
   renderTodos()
 }
 
-const saveTodo = (id:number, newText:string):void => {
-  const text = newText.trim()
-  if (text === '') return // stay in edit mode, empty todos aren't allowed
-
-  const todo = todos.find(todo => todo.id === id)
-  if (todo) todo.text = text
+// Save the new text (empty text is ignored by updateTodoText) and leave edit mode
+const saveEdit = (id: number, text: string): void => {
+  todos = updateTodoText(todos, id, text)
   editingId = null
   renderTodos()
 }
 
-const createButton = (label:string, className:string, onClick:() => void):HTMLButtonElement => {
+const createButton = (label: string, className: string, onClick: () => void): HTMLButtonElement => {
   const button = document.createElement('button')
-  button.type = 'button'
-  button.className = className
   button.textContent = label
+  button.className = className
   button.addEventListener('click', onClick)
   return button
 }
 
-const renderTodos = ():void => {
+// Normal view: text + Remove and Edit buttons
+const renderViewMode = (li: HTMLLIElement, todo: Todo): void => {
+  const span = document.createElement('span')
+  span.textContent = todo.text
+  li.append(
+    span,
+    createButton('Remove', 'remove-btn', () => removeTodo(todo.id)),
+    createButton('Edit', 'edit-btn', () => startEdit(todo.id))
+  )
+}
+
+// Edit view: text input + Save and Cancel buttons
+const renderEditMode = (li: HTMLLIElement, todo: Todo): void => {
+  const input = document.createElement('input')
+  input.type = 'text'
+  input.className = 'edit-input'
+  input.value = todo.text
+  input.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'Enter') saveEdit(todo.id, input.value)
+    if (event.key === 'Escape') cancelEdit()
+  })
+  li.append(
+    input,
+    createButton('Save', 'save-btn', () => saveEdit(todo.id, input.value)),
+    createButton('Cancel', 'cancel-btn', cancelEdit)
+  )
+}
+
+const renderTodos = (): void => {
   // clears the current list
   todoList.innerHTML = '';
 
   todos.forEach(todo => {
     const li = document.createElement('li')
     li.className = 'todo-item'
-
     if (todo.id === editingId) {
-      const input = document.createElement('input')
-      input.type = 'text'
-      input.className = 'edit-input'
-      input.value = todo.text
-      input.addEventListener('keydown', (event: KeyboardEvent) => {
-        if (event.key === 'Enter') saveTodo(todo.id, input.value)
-        if (event.key === 'Escape') cancelEditing()
-      })
-
-      li.append(
-        input,
-        createButton('Save', 'save-btn', () => saveTodo(todo.id, input.value)),
-        createButton('Cancel', 'cancel-btn', cancelEditing)
-      )
-      todoList.appendChild(li)
-      input.focus()
-      input.select()
+      renderEditMode(li, todo)
     } else {
-      const span = document.createElement('span')
-      span.textContent = todo.text
-
-      li.append(
-        span,
-        createButton('Remove', 'remove-btn', () => removeTodo(todo.id)),
-        createButton('Edit', 'edit-btn', () => startEditing(todo.id))
-      )
-      todoList.appendChild(li)
+      renderViewMode(li, todo)
     }
+    todoList.appendChild(li)
   })
+
+  // put the cursor in the edit field so the user can type right away
+  const editInput = todoList.querySelector<HTMLInputElement>('.edit-input')
+  editInput?.focus()
+  editInput?.select()
 }
 
 renderTodos();
