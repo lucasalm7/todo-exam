@@ -12,3 +12,7 @@ export const updateTodoText = (todos: Todo[], id: number, newText: string): Todo
   if (text === '') return todos
   return todos.map(todo => (todo.id === id ? { ...todo, text } : todo))
 }
+
+export const toggleTodo = (todos: Todo[], id: number): Todo[] => {
+  return todos.map(todo => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+}
