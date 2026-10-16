@@ -81,3 +81,21 @@ test('updates the background when the color changes again', async t => {
   await setColor('#00ff00')
   await t.expect(bodyBackground()).eql('rgb(0, 255, 0)')
 })
+
+fixture('Toggle completed').page(PAGE)
+
+test('marks a todo as completed', async t => {
+  await addTodo(t, 'Finish me')
+  await t.click('.toggle-btn')
+  await t
+    .expect(todoItems.nth(0).hasClass('completed')).ok()
+    .expect(Selector('.toggle-btn').innerText).eql('Undo')
+})
+
+test('undo reopens a completed todo', async t => {
+  await addTodo(t, 'Finish me')
+  await t.click('.toggle-btn').click('.toggle-btn')
+  await t
+    .expect(todoItems.nth(0).hasClass('completed')).notOk()
+    .expect(Selector('.toggle-btn').innerText).eql('Complete')
+})
