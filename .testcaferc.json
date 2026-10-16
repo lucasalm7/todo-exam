@@ -1,0 +1,13 @@
+{
+  "browsers": "firefox:headless",
+  "src": "e2e/todo.e2e.ts",
+  "compilerOptions": {
+    "typescript": {
+      "configPath": "e2e/tsconfig.json"
+    }
+  },
+  "browserInitTimeout": 60000,
+  "nativeAutomation": false,
+  "appCommand": "vite preview --port 4173 --strictPort",
+  "appInitDelay": 3000
+}
