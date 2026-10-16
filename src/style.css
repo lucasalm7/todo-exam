@@ -109,3 +109,12 @@ h1 {
   flex: 1;
   padding: 0.25rem 0.5rem;
 }
+
+.toggle-btn {
+  background: #007bff;
+}
+
+.todo-item.completed span {
+  text-decoration: line-through;
+  opacity: 0.6;
+}

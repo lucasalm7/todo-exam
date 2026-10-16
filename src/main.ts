@@ -1,6 +1,6 @@
 import './style.css'
 import { initializeColorPicker } from './colorPicker'
-import { updateTodoText, type Todo } from './todoLogic'
+import { updateTodoText, toggleTodo, type Todo } from './todoLogic'
 
 let todos: Todo[] = [];
 // id of the todo currently being edited, or null if none
@@ -57,6 +57,12 @@ const saveEdit = (id: number, text: string): void => {
   renderTodos()
 }
 
+// Flip the completed status of a todo and redraw the list
+const toggleCompleted = (id: number): void => {
+  todos = toggleTodo(todos, id)
+  renderTodos()
+}
+
 const createButton = (label: string, className: string, onClick: () => void): HTMLButtonElement => {
   const button = document.createElement('button')
   button.textContent = label
@@ -65,12 +71,15 @@ const createButton = (label: string, className: string, onClick: () => void): HT
   return button
 }
 
-// Normal view: text + Remove and Edit buttons
+// Normal view: text + Complete/Undo, Remove and Edit buttons
 const renderViewMode = (li: HTMLLIElement, todo: Todo): void => {
   const span = document.createElement('span')
   span.textContent = todo.text
+  // the "completed" class lets CSS style finished todos
+  if (todo.completed) li.classList.add('completed')
   li.append(
     span,
+    createButton(todo.completed ? 'Undo' : 'Complete', 'toggle-btn', () => toggleCompleted(todo.id)),
     createButton('Remove', 'remove-btn', () => removeTodo(todo.id)),
     createButton('Edit', 'edit-btn', () => startEdit(todo.id))
   )
