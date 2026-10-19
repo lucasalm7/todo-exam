@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "bundler",
+    "strict": false,
+    "skipLibCheck": true,
+    "types": ["testcafe"],
+    "typeRoots": ["../node_modules/@types", "../node_modules"],
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["../node_modules/@types/node", "../src", "../../node_modules/@types/node"]
+}
