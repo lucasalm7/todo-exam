@@ -128,7 +128,7 @@ Nothing is pushed directly to `main` or `develop`. Every change goes through a p
 
 ## Versioning
 
-The project uses [Semantic Versioning](https://semver.org/). New features raise the minor version, fixes raise the patch version and breaking changes raise the major version. The current version is **1.1.0**.
+The project uses [Semantic Versioning](https://semver.org/). New features raise the minor version, fixes raise the patch version and breaking changes raise the major version. The current version is **1.1.1**.
 
 ## Contributors
 
