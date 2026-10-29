@@ -23,5 +23,7 @@ jobs:
       - name: Check commit messages
         if: github.event_name == 'pull_request' && github.base_ref == 'develop'
         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+      - name: Run unit tests
+        run: npm run test:unit
       - name: Build and end-to-end tests
         run: npm run test:e2e

@@ -13,6 +13,8 @@ A simple todo list built with TypeScript and Vite, developed as an exam project 
 - Edit a todo inline, with Save and Cancel (Enter saves, Escape cancels)
 - Mark a todo as completed and undo it
 - Change the page background with a color picker
+- Clear all completed todos with a single click
+- Toggle all todos as completed or incomplete at once
 
 ## Tech stack
 
@@ -49,6 +51,7 @@ npm run dev
 | `npm run build` | Type-checks with `tsc` and builds the app into `dist/` |
 | `npm run preview` | Serves the production build locally |
 | `npm run test:e2e` | Builds the app and runs the TestCafe tests |
+| `npm run test:unit` | Runs Vitest unit tests for pure logic functions |
 
 ## Testing
 
@@ -60,6 +63,7 @@ The app is tested end to end with TestCafe. `npm run test:e2e` builds the app, s
 | Remove todo | removes a todo, removes only the selected one |
 | Edit todo | saves the edited text, cancel keeps the original |
 | Toggle completed | marks a todo as completed, undo reopens it |
+| Clear completed & Toggle all | clears completed todos, toggles all todos between finished and active |
 | Color picker | changes the background, updates it on a second change |
 
 The tests live in `e2e/todo.e2e.ts`.
