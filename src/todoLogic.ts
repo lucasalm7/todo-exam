@@ -16,3 +16,14 @@ export const updateTodoText = (todos: Todo[], id: number, newText: string): Todo
 export const toggleTodo = (todos: Todo[], id: number): Todo[] => {
   return todos.map(todo => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
 }
+
+// Returns a new list containing only uncompleted todos
+export const clearCompletedTodos = (todos: Todo[]): Todo[] => {
+  return todos.filter(todo => !todo.completed)
+}
+
+// If all todos are completed, uncompletes all. Otherwise, completes all.
+export const toggleAllTodos = (todos: Todo[]): Todo[] => {
+  const allCompleted = todos.length > 0 && todos.every(todo => todo.completed)
+  return todos.map(todo => ({ ...todo, completed: !allCompleted }))
+}

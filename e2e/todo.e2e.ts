@@ -99,3 +99,32 @@ test('undo reopens a completed todo', async t => {
     .expect(todoItems.nth(0).hasClass('completed')).notOk()
     .expect(Selector('.toggle-btn').innerText).eql('Complete')
 })
+
+fixture('Clear completed & Toggle all').page(PAGE)
+
+test('clears all completed todos from list', async t => {
+  await addTodo(t, 'Task 1')
+  await addTodo(t, 'Task 2')
+  await t.click(todoItems.nth(0).find('.toggle-btn')) // mark Task 1 finished
+  await t.click('#clear-completed-btn')
+  await t
+    .expect(todoItems.count).eql(1)
+    .expect(itemText(0).innerText).eql('Task 2')
+})
+
+test('toggles all todos to completed and back', async t => {
+  await addTodo(t, 'Task 1')
+  await addTodo(t, 'Task 2')
+  
+  // Toggle all -> both completed
+  await t.click('#toggle-all-btn')
+  await t
+    .expect(todoItems.nth(0).hasClass('completed')).ok()
+    .expect(todoItems.nth(1).hasClass('completed')).ok()
+
+  // Toggle all again -> both uncompleted
+  await t.click('#toggle-all-btn')
+  await t
+    .expect(todoItems.nth(0).hasClass('completed')).notOk()
+    .expect(todoItems.nth(1).hasClass('completed')).notOk()
+})

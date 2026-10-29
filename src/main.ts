@@ -1,6 +1,6 @@
 import './style.css'
 import { initializeColorPicker } from './colorPicker'
-import { updateTodoText, toggleTodo, type Todo } from './todoLogic'
+import { updateTodoText, toggleTodo, clearCompletedTodos, toggleAllTodos, type Todo } from './todoLogic'
 
 let todos: Todo[] = [];
 // id of the todo currently being edited, or null if none
@@ -9,8 +9,20 @@ let editingId: number | null = null;
 const todoInput = document.getElementById('todo-input') as HTMLInputElement
 const todoForm = document.querySelector('.todo-form') as HTMLFormElement
 const todoList = document.getElementById('todo-list') as HTMLUListElement
+const clearCompletedBtn = document.getElementById('clear-completed-btn') as HTMLButtonElement
+const toggleAllBtn = document.getElementById('toggle-all-btn') as HTMLButtonElement
 
 // const errorMessage = document.getElementById('error-message') as HTMLParagraphElement //possible feature
+
+clearCompletedBtn?.addEventListener('click', () => {
+  todos = clearCompletedTodos(todos)
+  renderTodos()
+})
+
+toggleAllBtn?.addEventListener('click', () => {
+  todos = toggleAllTodos(todos)
+  renderTodos()
+})
 
 const addTodo = (text:string):void => {
   const newTodo: Todo = {
